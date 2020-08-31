@@ -1,17 +1,22 @@
 #include <iostream>
+#include <string>
+#include <fstream>
 #include <locale.h>
 #include <Windows.h>
 #include "Figure/Vector.h"
 #include "Figure/Cursor.h"
 #include "Figure/Sphere.h"
+
 double 
 			cameraX = 0.0, cameraY = 0.0, 
 			mouseX = 0.0,  mouseY = 0.0,
 			rotateAngle = 1;
 bool 
 			isVector = true, isPositive = true;
-int 
-			func = 0, figure = 0, figureCount = 3;
+int
+			func = 0, figure = 0, figureCount = 3,
+			startX = 0, startY = 0, startZ = 0,
+			endX = 0,		endY = 0,		endZ = 0;
 double 
 			sizeCursor = 1, sizeSphere = 1;
 
@@ -19,12 +24,53 @@ Vector v(0, 0, 0, 1, 1, 1, "white");
 Cursor c(0, 0, 0, sizeCursor, "white");
 Sphere s(sizeSphere, "white");
 
+GLvoid init(GLvoid);
+
+GLvoid drawCoordinates();
+
+GLvoid display();
+
+void idleCallback();
+
+void processNormalKeys(unsigned char key, int x, int y);
+
+void processSpecialKeys(int key, int x, int y);
+
+void mouseMotionCallback(int x, int y);
+
+void instruction();
+
+int main(int argc, char** argv)
+{	
+	setlocale(0, "");
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(500, 500);
+	glutCreateWindow("OpenGL render simple 3d figure");
+	init();
+	glutDisplayFunc(display);
+	glutIdleFunc(idleCallback);
+
+	glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(processSpecialKeys);
+	glutMotionFunc(mouseMotionCallback);
+
+	glViewport(0, 0, (GLsizei)500, (GLsizei)500);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glutMainLoop();
+	return 0;
+}
+
 GLvoid init(GLvoid)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glShadeModel(GL_FLAT);
 }
-
 
 GLvoid drawCoordinates()
 {
@@ -106,6 +152,30 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	switch (key) {
 	case 9:
 		figure++;
+		break;
+	case 32:
+		switch (figure)
+		{
+		case 0:
+			system("cls");
+			std::cout << "введите начальные данные:\nx - ";
+			std::cin >> startX;
+			std::cout << "y - ";
+			std::cin >> startY;
+			std::cout << "z - ";
+			std::cin >> startZ;
+
+			std::cout << "введите конечные данные:\nx - ";
+			std::cin >> endX;
+			std::cout << "y - ";
+			std::cin >> endY;
+			std::cout << "z - ";
+			std::cin >> endZ;
+
+			v.setVector(startX, startY, startZ, endX, endY, endZ);
+			system("cls");
+			break;
+		}
 		break;
 	case 43:
 		isPositive = true;
@@ -400,73 +470,30 @@ void processSpecialKeys(int key, int x, int y) {
 	case GLUT_KEY_DOWN:
 		cameraY -= rotateAngle;
 		break;
+	case GLUT_KEY_F1:
+		instruction();
+		break;
 	}
 }
 
 void mouseMotionCallback(int x, int y)
 {
-		cameraX += (x - mouseX);
-		cameraY += (y - mouseY);
-		mouseX = x;
-		mouseY = y;
+	cameraX += (x - mouseX);
+	cameraY += (y - mouseY);
+	mouseX = x;
+	mouseY = y;
 }
 
-int main(int argc, char** argv)
+void instruction()
 {
-	setlocale(0, "");
-	std::cout
-		<< "Инструкция:\n"
-		<< "\n\nОписание осей координат:\n"
-		<< "Ось x нарисована красным цветом\n"
-		<< "Ось y нарисована зеленым цветом\n"
-		<< "Ось z нарисована синим цветом\n"
-
-		<< "\n\nСмена фигуры:\n"
-		<< "Для смены отображения вектора и курсора используйте клавишу \"Tab\"\n"
-
-		<< "\n\nФункции с фугурами:\n"
-
-		<< "\nФункция 1:\n"
-		<< "Для поворота объекта нужно сначала выбрать функцию под номером 1. Для ее выбора нажмите 1.\n"
-		<< "Для смены направления вращения используйте клавиши \"+\" и \"-\".\n"
-		<< "Для произведения вращения нажмите на клавишу которая отвечает за букву оси вокруг которой будет вращение. (x, y, z)\n"
-
-		<< "\nФункция 2:\n"
-		<< "Для передвижения объекта нужно сначала выбрать функцию под номером 2. Для ее выбора нажмите 2.\n"
-		<< "Для смены направления движения используйте клавиши \"+\" и \"-\".\n"
-		<< "Для произведения движения нажмите на клавишу которая отвечает за букву оси по которой будет движение. (x, y, z)\n"
-
-		<< "\nФункция 3:\n"
-		<< "Для изменения размеров объекта нужно сначала выбрать фунцию под номером 3. Для ее выбора нажмите 3.\n"
-		<< "Для произведения смены движения используйте кливиши \"+\" и \"-\".\n"
-
-		<< "\n\nСмена цвета:\n"
-		<< "Для смены цвета объекта на красный нажмите на клавишу \"r\"\n"
-		<< "Для смены цвета объекта на синий нажмите на клавишу \"b\"\n"
-		<< "Для смены цвета объекта на зеленый нажмите на клавишу \"g\"\n"
-		<< "Для смены цвета объекта на белый нажмите на клавишу \"w\"\n"
-
-		<< "\n\nВращение камеры:\n"
-		<< "Для вращения камеры используйте стрелки вверх, вниз, вправо, влево."
-		<< std::endl;
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(500, 500);
-	glutCreateWindow("Завдання 1-3 Жванський Артем 308-IПЗ");
-	init();
-	glutDisplayFunc(display);
-	glutIdleFunc(idleCallback);
-
-	glutKeyboardFunc(processNormalKeys);
-	glutSpecialFunc(processSpecialKeys);
-	glutMotionFunc(mouseMotionCallback);
-
-	glViewport(0, 0, (GLsizei)500, (GLsizei)500);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
-	glMatrixMode(GL_MODELVIEW);
-
-	glutMainLoop();
-	return 0;
+	system("cls");
+	std::ifstream in("Read_me_ru.txt");
+	std::string text;
+	if (in.is_open())
+	{
+		while (std::getline(in, text)) {
+			std::cout << text << std::endl;
+		}
+	}
+	in.close();
 }
