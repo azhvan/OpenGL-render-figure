@@ -42,12 +42,10 @@ GLvoid Vector::Draw(GLvoid)
 	glutSwapBuffers();
 }
 
-void Vector::setVector(double s_x, double s_y, double s_z, double e_x, double e_y, double e_z, std::string color)
+void Vector::setVector(double s_x, double s_y, double s_z, double e_x, double e_y, double e_z)
 {
 	start = new Point(s_x, s_y, s_z);
 	end = new Point(e_x, e_y, e_z);
-
-	this->setColor(color);
 }
 
 void Vector::setRotate(char axis, double angle)
