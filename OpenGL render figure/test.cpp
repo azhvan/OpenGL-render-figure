@@ -14,9 +14,7 @@ double
 bool 
 			isVector = true, isPositive = true;
 int
-			func = 0, figure = 0, figureCount = 3,
-			startX = 0, startY = 0, startZ = 0,
-			endX = 0,		endY = 0,		endZ = 0;
+			func = 0, figure = 0, figureCount = 3;
 double 
 			sizeCursor = 1, sizeSphere = 1;
 
@@ -25,19 +23,19 @@ Cursor c(0, 0, 0, sizeCursor, "white");
 Sphere s(sizeSphere, "white");
 
 GLvoid init(GLvoid);
-
 GLvoid drawCoordinates();
-
 GLvoid display();
-
 void idleCallback();
-
 void processNormalKeys(unsigned char key, int x, int y);
 
+void setFigure();
+void setColor(unsigned char key);
+void setRotate(unsigned char key);
+void setMove(unsigned char key);
+void resize(unsigned char key);
+
 void processSpecialKeys(int key, int x, int y);
-
 void mouseMotionCallback(int x, int y);
-
 void instruction();
 
 int main(int argc, char** argv)
@@ -154,28 +152,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
 		figure++;
 		break;
 	case 32:
-		switch (figure)
-		{
-		case 0:
-			system("cls");
-			std::cout << "введите начальные данные:\nx - ";
-			std::cin >> startX;
-			std::cout << "y - ";
-			std::cin >> startY;
-			std::cout << "z - ";
-			std::cin >> startZ;
-
-			std::cout << "введите конечные данные:\nx - ";
-			std::cin >> endX;
-			std::cout << "y - ";
-			std::cin >> endY;
-			std::cout << "z - ";
-			std::cin >> endZ;
-
-			v.setVector(startX, startY, startZ, endX, endY, endZ);
-			system("cls");
-			break;
-		}
+		setFigure();
 		break;
 	case 43:
 		isPositive = true;
@@ -192,269 +169,308 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	case 51:
 		func = 3;
 		break;
-	case 98:
-		switch (figure)
-		{
-		case 0:
-			v.setColor("blue");
-			break;
-		case 1:
-			c.setColor("blue");
-			break;
-		case 2:
-			s.setColor("blue");
-			break;
-		}
-		break;
-	case 103:
-		switch (figure)
-		{
-		case 0:
-			v.setColor("green");
-			break;
-		case 1:
-			c.setColor("green");
-			break;
-		case 2:
-			s.setColor("green");
-			break;
-		}
-		break;
-	case 114:
-		switch (figure)
-		{
-		case 0:
-			v.setColor("red");
-			break;
-		case 1:
-			c.setColor("red");
-			break;
-		case 2:
-			s.setColor("red");
-			break;
-		}
-		break;
-	case 119:
-		switch (figure)
-		{
-		case 0:
-			v.setColor("white");
-			break;
-		case 1:
-			c.setColor("white");
-			break;
-		case 2:
-			s.setColor("white");
-			break;
-		}
-		break;
+	case 98: case 103: case 114: case 119:
+		setColor(key);
+		break;		
 	case 27:
 		exit(0);
 		break;
 	}
-	if (func == 1) {
-		if (isPositive) {
-			if (key == 120)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('x', 0.1);
-					break;
-				case 1:
-					c.setRotate('x', 0.1);
-					break;
-				case 2:
-					s.setRotate('x', 0.1);
-					break;
-				}
-			else if (key == 121)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('y', 0.1);
-					break;
-				case 1:
-					c.setRotate('y', 0.1);
-					break;
-				case 2:
-					s.setRotate('y', 0.1);
-					break;
-				}
-			else if (key == 122)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('z', 0.1);
-					break;
-				case 1:
-					c.setRotate('z', 0.1);
-					break;
-				case 2:
-					s.setRotate('z', 0.1);
-					break;
-				}
-		}
-		else {
-			if (key == 120)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('x', -0.1);
-					break;
-				case 1:
-					c.setRotate('x', -0.1);
-					break;
-				case 2:
-					s.setRotate('x', -0.1);
-					break;
-				}
-			else if (key == 121)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('y', -0.1);
-					break;
-				case 1:
-					c.setRotate('y', -0.1);
-					break;
-				case 2:
-					s.setRotate('y', -0.1);
-					break;
-				}
-			else if (key == 122)
-				switch (figure)
-				{
-				case 0:
-					v.setRotate('z', -0.1);
-					break;
-				case 1:
-					c.setRotate('z', -0.1);
-					break;
-				case 2:
-					s.setRotate('z', -0.1);
-					break;
-				}
-		}
-	}
-	else if (func == 2) {
-		if (isPositive) {
-			if (key == 120)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('x', 0.1);
-					break;
-				case 1:
-					c.setMove('x', 0.1);
-					break;
-				case 2:
-					s.setMove('x', 0.1);
-					break;
-				}
-			else if (key == 121)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('y', 0.1);
-					break;
-				case 1:
-					c.setMove('y', 0.1);
-					break;
-				case 2:
-					s.setMove('y', 0.1);
-					break;
-				}
-			else if (key == 122)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('z', 0.1);
-					break;
-				case 1:
-					c.setMove('z', 0.1);
-					break;
-				case 2:
-					s.setMove('z', 0.1);
-					break;
-				}
-		}
-		else {
-			if (key == 120)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('x', -0.1);
-					break;
-				case 1:
-					c.setMove('x', -0.1);
-					break;
-				case 2:
-					s.setMove('x', -0.1);
-					break;
-				}
-			else if (key == 121)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('y', -0.1);
-					break;
-				case 1:
-					c.setMove('y', -0.1);
-					break;
-				case 2:
-					s.setMove('y', -0.1);
-					break;
-				}
-			else if (key == 122)
-				switch (figure)
-				{
-				case 0:
-					v.setMove('z', -0.1);
-					break;
-				case 1:
-					c.setMove('z', -0.1);
-					break;
-				case 2:
-					s.setMove('z', -0.1);
-					break;
-				}
-		}
-	}
+	if (func == 1)
+		setRotate(key);
+	else if (func == 2)
+		setMove(key);
 	else if (func == 3) {
-		if (key == 43) {
-			switch (figure)
-			{
-			case 0:
-				v.resize(1.1);
-				break;
-			case 1:
-				sizeCursor += 0.1;
-				c.resize(sizeCursor);
-				break;
-			case 2:
-				sizeSphere += 0.1;
-				s.resize(sizeSphere);
-				break;
-			}
-		}
-		else if (key == 45) {
-			switch (figure)
-			{
-			case 0:
-				v.resize(-1.1);
-				break;
-			case 1:
-				sizeCursor -= 0.1;
-				c.resize(sizeCursor);
-				break;
-			case 2:
-				sizeSphere -= 0.1;
-				s.resize(sizeSphere);
-				break;
-			}
-		}
+		resize(key);
 	}
 }
+
+void setFigure() 
+{
+	int
+		startX = 0, startY = 0, startZ = 0,
+		endX = 0,		endY = 0,		endZ = 0;
+	switch (figure)
+	{
+	case 0:
+		system("cls");
+		std::cout << "введите начальные данные:\nx - ";
+		std::cin >> startX;
+		std::cout << "y - ";
+		std::cin >> startY;
+		std::cout << "z - ";
+		std::cin >> startZ;
+
+		std::cout << "введите конечные данные:\nx - ";
+		std::cin >> endX;
+		std::cout << "y - ";
+		std::cin >> endY;
+		std::cout << "z - ";
+		std::cin >> endZ;
+
+		v.setVector(startX, startY, startZ, endX, endY, endZ);
+		system("cls");
+		break;
+	}
+}
+
+#pragma region Color
+void setBlue()
+{
+	switch (figure)
+	{
+	case 0:
+		v.setColor("blue");
+		break;
+	case 1:
+		c.setColor("blue");
+		break;
+	case 2:
+		s.setColor("blue");
+		break;
+	}
+}
+
+void setGreen()
+{
+	switch (figure)
+	{
+	case 0:
+		v.setColor("green");
+		break;
+	case 1:
+		c.setColor("green");
+		break;
+	case 2:
+		s.setColor("green");
+		break;
+	}
+}
+
+void setRed()
+{
+	switch (figure)
+	{
+	case 0:
+		v.setColor("red");
+		break;
+	case 1:
+		c.setColor("red");
+		break;
+	case 2:
+		s.setColor("red");
+		break;
+	}
+}
+
+void setWhite()
+{
+	switch (figure)
+	{
+	case 0:
+		v.setColor("white");
+		break;
+	case 1:
+		c.setColor("white");
+		break;
+	case 2:
+		s.setColor("white");
+		break;
+	}
+}
+
+void setColor(unsigned char key)
+{
+	switch (key)
+	{
+	case 98:
+		setBlue();
+		break;
+	case 103:
+		setGreen();
+		break;
+	case 114:
+		setRed();
+		break;
+	case 119:
+		setWhite();
+		break;
+	}
+}
+#pragma endregion
+
+#pragma region Rotate
+void rotateX() 
+{
+	double angle = 0.1;
+	if (!isPositive)
+		angle *= -1;
+		switch (figure)
+		{
+		case 0:
+			v.setRotate('x', angle);
+			break;
+		case 1:
+			c.setRotate('x', angle);
+			break;
+		case 2:
+			s.setRotate('x', angle);
+			break;
+		}
+}
+
+void rotateY()
+{
+	double angle = 0.1;
+	if (!isPositive)
+		angle *= -1;
+	switch (figure)
+	{
+	case 0:
+		v.setRotate('y', angle);
+		break;
+	case 1:
+		c.setRotate('y', angle);
+		break;
+	case 2:
+		s.setRotate('y', angle);
+		break;
+	}
+}
+
+void rotateZ()
+{
+	double angle = 0.1;
+	if (!isPositive)
+		angle *= -1;
+	switch (figure)
+	{
+	case 0:
+		v.setRotate('z', angle);
+		break;
+	case 1:
+		c.setRotate('z', angle);
+		break;
+	case 2:
+		s.setRotate('z', angle);
+		break;
+	}
+}
+
+void setRotate(unsigned char key)
+{
+	switch (key)
+	{
+	case 120:
+		rotateX();
+		break;
+	case 121:
+		rotateY();
+		break;
+	case 122:
+		rotateZ();
+		break;
+	}	
+}
+#pragma endregion
+
+#pragma region Move
+void moveX() 
+{
+	double distance = 0.1;
+	if (!isPositive)
+		distance *= -1;
+	switch (figure)
+	{
+	case 0:
+		v.setMove('x', distance);
+		break;
+	case 1:
+		c.setMove('x', distance);
+		break;
+	case 2:
+		s.setMove('x', distance);
+		break;
+	}
+}
+
+void moveY()
+{
+	double distance = 0.1;
+	if (!isPositive)
+		distance *= -1;
+	switch (figure)
+	{
+	case 0:
+		v.setMove('y', distance);
+		break;
+	case 1:
+		c.setMove('y', distance);
+		break;
+	case 2:
+		s.setMove('y', distance);
+		break;
+	}
+}
+
+void moveZ()
+{
+	double distance = 0.1;
+	if (!isPositive)
+		distance *= -1;
+	switch (figure)
+	{
+	case 0:
+		v.setMove('z', distance);
+		break;
+	case 1:
+		c.setMove('z', distance);
+		break;
+	case 2:
+		s.setMove('z', distance);
+		break;
+	}
+}
+
+void setMove(unsigned char key)
+{
+	switch (key)
+	{
+	case 120:
+		moveX();
+		break;
+	case 121:
+		moveY();
+		break;
+	case 122:
+		moveZ();
+		break;
+	}
+}
+#pragma endregion
+
+#pragma region Resize
+void resize(unsigned char key)
+{
+	double changeTo = 0.1, time = 1.1;
+	if (key == 45) {
+		changeTo *= -1;
+		time *= -1;
+	}
+	switch (figure)
+	{
+	case 0:
+		v.resize(time);
+		break;
+	case 1:
+		c.resize(sizeCursor += changeTo);
+		break;
+	case 2:
+		s.resize(sizeSphere += changeTo);
+		break;
+	}
+}
+#pragma endregion
 
 void processSpecialKeys(int key, int x, int y) {
 	switch (key) {
@@ -487,7 +503,7 @@ void mouseMotionCallback(int x, int y)
 void instruction()
 {
 	system("cls");
-	std::ifstream in("Read_me_ru.txt");
+	std::ifstream in("Read_me.txt");
 	std::string text;
 	if (in.is_open())
 	{
